@@ -29,6 +29,10 @@ import Logout from "./components/Logout";
 import ForgetPassword from "./components/ForgetPassword";
 import PaymentIntegration from "./components/PaymentIntegration";
 import PaymentFailed from "./components/PaymentFailed";
+import Chatbot from "./components/Chatbot";
+// import ReCAPTCHA from "react-google-recaptcha";
+import CheckboxRecaptcha from "./components/CheckboxRecaptcha";
+import CompleteVerification from "./components/CompleteVerification"
 function App() {
   const [userAddress, setUserAddress] = useState("");
   return (
@@ -59,6 +63,10 @@ function App() {
           <Route path="/forgot-password" element={<ForgetPassword/>} />
           <Route path="/payment-integration" element={<PaymentIntegration />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
+          <Route path="/chatbot" element={<Chatbot/>} />
+          {/* <Route path="/recaptcha" element={<ReCAPTCHA/>} /> */}
+          <Route path="/recaptcha2" element={<CheckboxRecaptcha/>} />
+          <Route path="/complete-verfication" element={<CompleteVerification/>} />
           <Route
             path="/address"
             element={<AddressPage userAddress={userAddress} setUserAddress={setUserAddress} />}
