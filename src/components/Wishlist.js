@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTrash, FaShoppingCart } from "react-icons/fa";
+import { FaTrash, FaShoppingCart, FaHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -68,52 +68,64 @@ const Wishlist = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md text-center">
+    <div className="container mx-auto p-10">
       <ToastContainer />
-      <h2 className="text-2xl font-bold mb-4">Wishlist ({wishlist.length})</h2>
+      
+      {/* Wishlist Header */}
+      <div className="flex justify-between items-center mb-5">
+        <h2 className="text-2xl font-semibold">Your Wishlist</h2>
+        <button
+          className="px-4 py-2 bg-green-100 text-green-600 font-semibold rounded-md "
+          onClick={() => navigate("/cart")}
+        >
+          Go to Cart
+        </button>
+      </div>
 
-      {loading ? (
-        <p className="text-lg text-gray-600">Loading wishlist...</p>
-      ) : error ? (
-        <p className="text-lg text-red-500">{error}</p>
-      ) : wishlist.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {wishlist.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white border p-4 rounded-lg shadow-lg relative flex flex-col items-center"
-            >
-              <button
-                className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
-                onClick={() => removeFromWishlist(product.id)}
-              >
-                <FaTrash size={18} />
-              </button>
-              <img
-                src={product.imageUrl}
-                alt={product.productName}
-                className="w-full h-40 object-cover rounded-md cursor-pointer hover:opacity-80"
-                onClick={() => navigate(`/productdetail/${product.id}`)}
-              />
-              <h3 className="text-lg font-semibold mt-2">{product.productName}</h3>
-              <span className="text-sm text-gray-500">
-                {product.rating} ★ ({product.reviewCount} reviews)
-              </span>
-              <div className="text-lg font-bold mt-2">
-                ${product.price} <span className="text-red-500">{product.discountPercentage}% OFF</span>
+      {/* Wishlist Items */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {loading ? (
+          <p className="col-span-full text-center text-gray-500">Loading wishlist...</p>
+        ) : error ? (
+          <p className="col-span-full text-center text-red-500">{error}</p>
+        ) : wishlist.length > 0 ? (
+          wishlist.map((product) => (
+            <div key={product.id} className="bg-white shadow-md rounded-lg overflow-hidden p-4">
+              <div className="relative">
+                <FaTrash
+                  className="absolute top-2 right-2 text-sm text-gray-500 hover:text-red-500 cursor-pointer"
+                  onClick={() => removeFromWishlist(product.id)}
+                />
+                <img
+                  src={product.imageUrl}
+                  alt={product.productName}
+                  className="w-full h-40 object-contain cursor-pointer"
+                  onClick={() => navigate(`/productdetail/${product.id}`)}
+                />
               </div>
-              <button
-                className="mt-3 bg-black text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 w-full hover:bg-gray-800"
-                onClick={() => addToCart(product)}
-              >
-                <FaShoppingCart /> Add to Cart
-              </button>
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold">{product.productName}</h3>
+                <div className="flex items-center  font-semibold text-yellow-500 text-sm">
+                  <span>{product.rating} ★</span>
+                  <span className="ml-2 text-gray-500 ">({product.reviewCount} reviews)</span>
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-sm font-semibold text-gray-800">${product.price}</span>
+                  <span className="text-sm text-red-500 font-semibold">{product.discountPercentage}% OFF</span>
+                </div>
+                <button
+                  className="w-full mt-3 bg-blue-50 text-blue-600  font-semibold py-2 rounded-md flex items-center justify-center hover:bg-blue-400 hover:text-white"
+                  onClick={() => addToCart(product)}
+                >
+                  <FaShoppingCart className="mr-2" /> Add to Cart
+                </button>
+              </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-lg text-gray-600">Your wishlist is empty!</p>
-      )}
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500">Your wishlist is empty!</p>
+        )}
+      </div>
     </div>
   );
 };

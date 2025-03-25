@@ -1,42 +1,51 @@
-// import React, { useRef, useState } from "react";
-// import ReCAPTCHA from "react-google-recaptcha";
+import React, { useEffect, useState } from "react";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
-// const InvisibleRecaptcha = () => {
-//   const recaptchaRef = useRef(null);
-//   const [message, setMessage] = useState("");
+const RecaptchaV3Component = () => {
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [token, setToken] = useState("");
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     recaptchaRef.current.execute();
-//   };
+  useEffect(() => {
+    if (!executeRecaptcha) {
+      return;
+    }
 
-//   const onReCAPTCHAChange = async (token) => {
-//     console.log("CAPTCHA Token:", token);
-//     if (token) {
-//       setMessage("CAPTCHA Verified ✅");
-//       // Send 'token' to your backend for verification
-//     } else {
-//       setMessage("CAPTCHA Failed ❌");
-//     }
-//   };
+    const getToken = async () => {
+      const recaptchaToken = await executeRecaptcha("submit_form");
+      setToken(recaptchaToken);
+    };
 
-//   return (
-//     <div>
-//       <h2>Google reCAPTCHA v2 - Invisible</h2>
-//       <form onSubmit={handleSubmit}>
-//         <input type="text" placeholder="Enter your name" required />
-//         <br /><br />
-//         <ReCAPTCHA
-//           ref={recaptchaRef}
-//           sitekey="6LcrvPwqAAAAALEDp7zLhuN-43yt2Pj9Il8ovgJ3"
-//           size="invisible"
-//           onChange={onReCAPTCHAChange}
-//         />
-//         <button type="submit">Submit</button>
-//       </form>
-//       <p>{message}</p>
-//     </div>
-//   );
-// };
+    getToken();
+  }, [executeRecaptcha]);
 
-// export default InvisibleRecaptcha;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!token) {
+      alert("reCAPTCHA failed. Try again.");
+      return;
+    }
+
+    const response = await fetch("http://localhost:4000/verify-recaptcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      alert(" reCAPTCHA Verified! Form submitted.");
+    } else {
+      alert(" reCAPTCHA Verification Failed!");
+    }
+  };
+
+  return (
+    <GoogleReCaptchaProvider reCaptchaKey="6Lc1h_8qAAAAAJ9TZbXB6zc4mDlZLW-HzzOAK1SC">
+      <form onSubmit={handleSubmit}>
+        <button type="submit">Submit</button>
+      </form>
+    </GoogleReCaptchaProvider>
+  );
+};
+
+export default RecaptchaV3Component;

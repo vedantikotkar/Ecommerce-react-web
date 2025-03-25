@@ -79,24 +79,24 @@ const TodaysDeals = () => {
                 <img
                   src={product.imageUrl}
                   alt={product.productName}
-                  className="w-half h-40 object-cover cursor-pointer rounded-lg"
+                  className="w-full h-40 object-contain cursor-pointer"
                   onClick={() => navigate(`/productdetail/${product.id}`)}
                 />
                 <FaHeart 
-                  className={`absolute top-2 right-2 text-xl cursor-pointer transition ${
-                    wishlist.some(item => item.id === product.id) ? 'text-red-500' : 'text-gray-400'
+                  className={`absolute top-2 right-2 text-l cursor-pointer transition ${
+                    wishlist.some(item => item.id === product.id) ? 'text-black-500' : 'text-gray-400'
                   }`}
                   onClick={() => handleWishlist(product)}
                 />
               </div>
               <div className="mt-3 text-center">
-                <h3 className="text-lg font-semibold">{product.productName}</h3>
-                <div className="text-yellow-500 font-semibold flex justify-center items-center gap-1">
+                <h3 className="text-sm font-semibold">{product.productName}</h3>
+                <div className="text-yellow-500  text-sm font-semibold flex justify-center items-center gap-1">
                   <span>{product.rating} ★</span>
                   <span className="text-gray-500">({product.reviewCount} reviews)</span>
                 </div>
                 <div className="mt-2">
-                  <span className="text-xl font-bold text-gray-800">${product.price}</span>
+                  <span className="text-l font-semibold text-gray-800">${product.price}</span>
                   <span className="ml-2 text-sm text-red-500 font-semibold">{product.discountPercentage}% OFF</span>
                 </div>
               </div>

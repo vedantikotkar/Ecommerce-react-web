@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Star, ShoppingCart, Heart } from "lucide-react";
+import { FaShoppingCart } from "react-icons/fa";
 import { FaHeart, FaCheckCircle } from "react-icons/fa";
 
 export default function ProductDetail() {
@@ -11,6 +12,7 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState([]);
+  const [cart, setCart] = useState([]); // Added missing cart state
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [loading, setLoading] = useState(true);
@@ -22,6 +24,10 @@ export default function ProductDetail() {
   useEffect(() => {
     const savedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
     setWishlist(savedWishlist);
+
+    // Initialize cart from localStorage
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(savedCart);
   }, []);
 
   useEffect(() => {
@@ -62,10 +68,6 @@ export default function ProductDetail() {
   const handleBuyNow = () => {
     navigate("/address");
   };
-  useEffect(() => {
-    const savedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(savedWishlist);
-  }, []);
 
   const handleWishlist = (product) => {
     let updatedWishlist = [...wishlist];
@@ -85,7 +87,14 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
-    // Add to cart logic...
+    if (product) {
+      addToCart({
+        ...product,
+        selectedColor,
+        selectedSize,
+        quantity
+      });
+    }
   };
 
   const isInWishlist = (productId) => {
@@ -106,12 +115,28 @@ export default function ProductDetail() {
       </div>
     );
   };
+  const sizes = ["S", "M", "L", "XL", "XXL"];
+  const [sizeIndex, setSizeIndex] = useState(0);
+  const addToCart = (product) => {
+    const updatedCart = [...cart];
+    const existingProduct = updatedCart.find((item) => item.id === product.id);
 
-  const handleImageChange = (index) => {
-    if (product?.images) {
-      setSelectedImage(product.images[index]);
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      updatedCart.push({ ...product, quantity: 1 });
     }
+
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    alert(`${product.productName} added to cart!`);
   };
+
+  // const handleImageChange = (index) => {
+  //   if (product?.images) {
+  //     setSelectedImage(product.images[index]);
+  //   }
+  // };
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -148,14 +173,14 @@ export default function ProductDetail() {
         </div>
 
         {/* Middle - Main Image */}
-        <div className="relative flex items-center justify-center bg-gray-50 rounded-lg p-4 shadow-sm">
+        <div className="relative flex items-center justify-center bg-white-50 rounded-lg p-4 ">
           <img
             src={selectedImage}
             alt={product.productName}
             className="w-full h-auto max-h-126 object-contain transition-all duration-500"
           />
         </div>
-        
+
         {/* Right Side - Product Details */}
         <div className="flex flex-col relative flex items-center justify-center bg-gradient-to-r from-white-100 to-gray-200 rounded-lg p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300">
           <div className="mb-4">
@@ -232,13 +257,9 @@ export default function ProductDetail() {
               >
                 -
               </button>
-              <input
-                type="number"
-                min="1"
-                value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                className="text-center w-14 text-lg font-medium bg-white border-t border-b border-gray-300 focus:outline-none"
-              />
+              <span className="text-center w-14 text-lg font-medium bg-white border-t border-b border-gray-300 px-4 py-2">
+                {quantity}
+              </span>
               <button
                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-r-lg transition duration-200"
                 onClick={() => setQuantity(quantity + 1)}
@@ -247,6 +268,30 @@ export default function ProductDetail() {
               </button>
             </div>
           </div>
+
+          {/* Size Selector */}
+          <div className="flex flex-col items-start mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Size</h3>
+            <div className="flex items-center bg-gray-100 rounded-lg shadow-md">
+              <button
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-l-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => setSizeIndex(Math.max(0, sizeIndex - 1))}
+                disabled={sizeIndex <= 0}
+              >
+                -
+              </button>
+              <span className="text-center w-20 text-lg font-medium bg-white border-t border-b border-gray-300 px-4 py-2">
+                {sizes[sizeIndex]}
+              </span>
+              <button
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-r-lg transition duration-200"
+                onClick={() => setSizeIndex(Math.min(sizes.length - 1, sizeIndex + 1))}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
 
           {/* Action Buttons */}
           <div className="flex space-x-3 mb-6">
@@ -328,62 +373,54 @@ export default function ProductDetail() {
         <div className="mt-12 mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">You May Also Like</h2>
-            <button className="text-blue-500 hover:text-blue-600 font-medium">View All</button>
+            <button className="text-emerald-500 hover:text-emerald-600 font-medium">View All</button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {relatedProducts.map((relatedProduct) => (
               <div
                 key={relatedProduct.id}
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300 transform hover:-translate-y-1 cursor-pointer"
-                onClick={() => navigate(`/product/${relatedProduct.id}`)} // Navigate to the product detail page
+                onClick={() => navigate(`/product/${relatedProduct.id}`)}
               >
                 <div className="relative group">
+
+
+                  <FaHeart
+                    className={`absolute top-2 right-2 text-xl cursor-pointer ${wishlist.some(item => item.id === product.id) ? 'text-red-500' : 'text-gray-400'}`}
+                    onClick={() => handleWishlist(product)}
+                  />
                   <img
                     src={relatedProduct.imageUrl}
                     alt={relatedProduct.productName}
                     className="w-full h-56 object-cover rounded-t-lg"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span className="bg-white text-gray-800 px-4 py-2 rounded-md font-medium shadow">View Details</span>
-                  </div>
-
-                  {/* Wishlist Button */}
-                  <button
-                    className={`absolute top-3 right-3 bg-white p-2 rounded-full shadow-md transition-colors ${
-                      isInWishlist(relatedProduct.id) ? "text-red-500" : "text-gray-400 hover:text-gray-700"
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleWishlist(relatedProduct);
-                    }}
-                  >
-                    <Heart size={18} fill={isInWishlist(relatedProduct.id) ? "currentColor" : "none"} />
-                  </button>
-
-                  {relatedProduct.originalPrice && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
-                      {Math.round((1 - relatedProduct.price / relatedProduct.originalPrice) * 100)}% OFF
-                    </div>
-                  )}
                 </div>
 
                 <div className="p-4 text-center">
                   <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">{relatedProduct.productName}</h3>
-
-                 
-                  <div className="text-yellow-500 font-semibold flex justify-center items-center gap-1 mt-1">
-                    <span>{relatedProduct.rating} ★ </span>
-                    <span className="text-gray-500 text-sm">({relatedProduct.reviewCount} reviews)</span>
+                  <div className="flex items-center text-yellow-500 text-sm">
+                    <span>{product.rating} ★</span>
+                    <span className="ml-2 text-gray-500">({product.reviewCount} reviews)</span>
                   </div>
-
-        
-                  <div className="mt-2 flex justify-center items-center gap-2">
-                    <span className="text-xl font-bold text-gray-800">${relatedProduct.price}</span>
-                    {relatedProduct.originalPrice && (
-                      <span className="ml-2 text-sm text-red-500 font-semibold">{Math.round((1 - relatedProduct.price / relatedProduct.originalPrice) * 100)}% OFF</span>
+                  {/* Price & Discount */}
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="text-lg font-bold text-gray-800">${relatedProduct.price}</span>
+                    {relatedProduct.discountPercentage && (
+                      <span className="text-sm text-red-500 font-bold">{relatedProduct.discountPercentage}% OFF</span>
                     )}
                   </div>
+
+                  {/* Add to Cart Button */}
+                  <button
+                    className="w-full mt-3 bg-blue-500 text-white py-2 rounded-md flex items-center justify-center hover:bg-blue-600"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent navigation when clicking the button
+                      addToCart(relatedProduct);
+                    }}
+                  >
+                    <FaShoppingCart className="mr-2" /> Add to Cart
+                  </button>
                 </div>
               </div>
             ))}

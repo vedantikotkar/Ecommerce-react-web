@@ -162,7 +162,7 @@ const CreateAccount = () => {
 
         {/* Signup Button */}
         <button
-          className="w-3/4 bg-red-600 text-white p-2 rounded-md mt-4 hover:bg-red-700 transition"
+          className="w-3/4 bg-red-100 text-red-600  font-semibold p-2 rounded-md mt-4 hover:bg-red-400 hover:text-white transition"
           onClick={handleSignup}
           disabled={isLoading}
         >
@@ -173,7 +173,7 @@ const CreateAccount = () => {
         {message && <p className="text-red-500 mt-2">{message}</p>}
 
         {/* Google Signup Button */}
-        <button className="w-3/4 flex items-center justify-center border border-gray-300 p-2 rounded-md mt-4 hover:bg-gray-100 transition">
+        <button className="w-3/4 flex items-center justify-center font-semibold  bg-blue-50 text-blue-600 border border-gray-300 p-2 rounded-md mt-4 hover:bg-blue-400 hover:text-white transition">
           <FontAwesomeIcon icon={faGoogle} className="mr-2" />
           Sign up with Google
         </button>

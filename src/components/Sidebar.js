@@ -13,13 +13,13 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <div className="w-64 bg-white h-screen  p-5 mt-10">
+    <div className="w-64 bg-white text-black h-screen  p-5 mt-10">
    
       <ul className="space-y-4">
         {categories.length > 0 ? (
           categories.map((category) => (
-            <li key={category.id} className="p-3 rounded-md hover:bg-gray-200">
-              <Link to={`/category/${category.id}`} className="text-lg text-gray-700 hover:text-blue-600">
+            <li key={category.id} className="p-3 rounded-md hover:bg-blue-200 hover:text-white">
+              <Link to={`/category/${category.id}`} className="text-sm  font-bold text-black hover:text-white">
                 {category.name}
               </Link>
             </li>

@@ -33,6 +33,7 @@ import Chatbot from "./components/Chatbot";
 // import ReCAPTCHA from "react-google-recaptcha";
 import CheckboxRecaptcha from "./components/CheckboxRecaptcha";
 import CompleteVerification from "./components/CompleteVerification"
+import ProductDetails from "./components/ProductDetailPage2";
 function App() {
   const [userAddress, setUserAddress] = useState("");
   return (
@@ -76,7 +77,7 @@ function App() {
             element={<OrderSummary userAddress={userAddress} />}
           />
           <Route path="/payment" element={<PaymentPage />} />
-
+          <Route path="/productdetails/:productId" element={<ProductDetails/>} />
 
           <Route path="/category/:categoryId" element={<CategoryProducts />} />
 

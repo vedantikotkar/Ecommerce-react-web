@@ -4,96 +4,17 @@ import axios from "axios";
 
 const AccountPage = () => {
   const navigate = useNavigate();
-  const [user, setUser ] = useState(null);
+  const [user, setUser] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [uploading, setUploading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
   });
 
-  // useEffect(() => {
-  //   const storedUser  = JSON.parse(localStorage.getItem("user"));
-  //   if (!storedUser ) {
-  //     navigate("/login");
-  //   } else {
-  //     setUser (storedUser );
-    
-  //     const storedImage = localStorage.getItem("profileImage");
-  //     if (storedImage) {
-  //       setProfileImage(`http://localhost:4000/uploads/${storedImage}`);
-  //     }
-  //   }
-  // }, [navigate]);
-
-  // const handleImageUpload = async (event) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     setUploading(true);
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-  //     formData.append("username", user.username);
-
-  //     try {
-  //       const response = await axios.post(
-  //         "http://localhost:4000/auth/upload",
-  //         formData,
-  //         {
-  //           headers: { "Content-Type": "multipart/form-data" },
-  //         }
-  //       );
-
-  //       const uploadedFileName = response.data.split(": ")[1].trim();
-  //       const imageUrl = `http://localhost:4000/uploads/${uploadedFileName}`;
-
-  //       setProfileImage(imageUrl);
-  //       localStorage.setItem("profileImage", uploadedFileName);
-  //     } catch (error) {
-  //       console.error("Error uploading profile photo:", error);
-  //     } finally {
-  //       setUploading(false);
-  //     }
-  //   }
-  // };
-
-  // const handleDeleteImage = async () => {
-  //   const filename = localStorage.getItem("profileImage");
-  //   if (!filename) return;
-
-  //   try {
-  //     await axios.delete(
-  //       `http://localhost:4000/auth/remove/${filename}?username=${user.username}`
-  //     );
-
-  //     setProfileImage(null);
-  //     localStorage.removeItem("profileImage");
-  //   } catch (error) {
-  //     console.error("Error deleting profile photo:", error);
-  //   }
-  // };
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleSaveChanges = () => {
-  //   console.log("Saving changes:", formData);
-  // };
-
-  const menuItems = [
-    { id: "profile", label: "My Profile", icon: "user" },
-    { id: "address", label: "Address Book", icon: "map" },
-    { id: "payment", label: "Payment Options", icon: "credit-card" },
-    { id: "orders", label: "Order History", icon: "shopping-bag" },
-    { id: "wishlist", label: "Wishlist", icon: "heart" },
-    { id: "settings", label: "Account Settings", icon: "settings" },
-  ];
-
+  // Icons for menu items
   const icons = {
     user: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -128,23 +49,72 @@ const AccountPage = () => {
     ),
   };
 
+  // Menu items for sidebar
+  const menuItems = [
+    { id: "profile", label: "My Profile", icon: "user" },
+    { id: "address", label: "Address Book", icon: "map" },
+    { id: "payment", label: "Payment Options", icon: "credit-card" },
+    { id: "orders", label: "Order History", icon: "shopping-bag" },
+    { id: "wishlist", label: "Wishlist", icon: "heart" },
+    { id: "settings", label: "Account Settings", icon: "settings" },
+  ];
 
+  // Authentication and User Check
   useEffect(() => {
-    const storedUser  = JSON.parse(localStorage.getItem("user"));
-    if (!storedUser ) {
-      navigate("/login");
-    } else {
-      setUser (storedUser );
-      const storedImage = localStorage.getItem("profileImage");
-      if (storedImage) {
-        setProfileImage(`http://localhost:4000/uploads/${storedImage}`);
+    const checkAuthStatus = () => {
+      const storedUser = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
+
+      if (storedUser && token) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+
+          // Check for stored profile image
+          const storedImage = localStorage.getItem("profileImage");
+          if (storedImage) {
+            setProfileImage(`http://localhost:4000/uploads/${storedImage}`);
+          }
+        } catch (error) {
+          handleLogout();
+        }
+      } else {
+        handleLogout();
       }
-    }
+    };
+
+    checkAuthStatus();
   }, [navigate]);
 
+  // Logout Handler
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("profileImage");
+    setUser(null);
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
+
+  // Image Upload Handler
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file type and size
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!validTypes.includes(file.type)) {
+        alert("Please upload a valid image (JPEG, PNG, GIF)");
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert("Image size should be less than 5MB");
+        return;
+      }
+
       setUploading(true);
       const formData = new FormData();
       formData.append("file", file);
@@ -156,22 +126,25 @@ const AccountPage = () => {
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
+            timeout: 10000 // 10 second timeout
           }
         );
 
         const uploadedFileName = response.data.split(": ")[1].trim();
-        const imageUrl = `http://localhost:4000/products/images/${uploadedFileName}`;
+        const imageUrl = `http://localhost:4000/uploads/${uploadedFileName}`;
 
         setProfileImage(imageUrl);
         localStorage.setItem("profileImage", uploadedFileName);
       } catch (error) {
         console.error("Error uploading profile photo:", error);
+        alert("Failed to upload image. Please try again.");
       } finally {
         setUploading(false);
       }
     }
   };
 
+  // Delete Image Handler
   const handleDeleteImage = async () => {
     const filename = localStorage.getItem("profileImage");
     if (!filename) return;
@@ -188,6 +161,7 @@ const AccountPage = () => {
     }
   };
 
+  // Input Change Handler
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -196,18 +170,48 @@ const AccountPage = () => {
     });
   };
 
-  const handleSaveChanges = () => {
-    console.log("Saving changes:", formData);
-    // Implement save changes logic here
+  // Save Changes Handler
+  const handleSaveChanges = async () => {
+    // Basic validation
+    if (!formData.fullName || !formData.phoneNumber) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:4000/users/update/${user.username}`, 
+        {
+          fullName: formData.fullName,
+          phoneNumber: formData.phoneNumber
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      // Update local storage with new user data
+      const updatedUser = { ...user, ...response.data };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again.");
+    }
   };
 
+  // Render Empty State for Sections
   const renderEmptyState = (title, buttonText) => (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">{title}</h2>
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
         <p className="text-blue-800">You haven't added any {title.toLowerCase()} yet.</p>
       </div>
-      <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md flex items-center">
+      <button className="bg-blue-100  text-blue-600 font-semibold px-6 py-3 rounded-lg  transition shadow-md flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
         </svg>
@@ -216,6 +220,7 @@ const AccountPage = () => {
     </div>
   );
 
+  // Render Development Placeholder
   const renderDevelopmentPlaceholder = () => (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="bg-gray-100 rounded-full p-4 mb-4">
@@ -230,8 +235,9 @@ const AccountPage = () => {
     </div>
   );
 
+  // Render Main Component
   return (
-    <div className="bg-gray-50 min-h-screen pt-6">
+    <div className="bg-gray-50 min-h-screen pt-6 font-semibold">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-24 w-full relative">
         <div className="absolute inset-0 bg-black opacity-20"></div>
@@ -247,8 +253,9 @@ const AccountPage = () => {
             {/* Sidebar */}
             <div className="w-full md:w-1/4 bg-gray-50 py-8 px-6">
               <div className="flex flex-col items-center md:items-start mb-8">
+                {/* Profile Image */}
                 <div className="relative">
-                {profileImage ? (
+                  {profileImage ? (
                     <img
                       src={profileImage}
                       alt="Profile"
@@ -266,6 +273,8 @@ const AccountPage = () => {
                     </div>
                   )}
                 </div>
+                
+                {/* User Info */}
                 {user && (
                   <div className="mt-4 text-center md:text-left">
                     <h3 className="text-xl font-bold text-gray-800">{user.username}</h3>
@@ -273,14 +282,8 @@ const AccountPage = () => {
                   </div>
                 )}
               </div>
-                {user && (
-                  <div className="mt-4 text-center md:text-left">
-                    <h3 className="text-xl font-bold text-gray-800">{user.username}</h3>
-                    <p className="text-gray-500 text-sm">{user.email}</p>
-                  </div>
-                )}
-            
 
+              {/* Menu Items */}
               <div className="space-y-1">
                 {menuItems.map((item) => (
                   <button
@@ -301,69 +304,63 @@ const AccountPage = () => {
               </div>
             </div>
 
-           {/* Profile Content */}
-           <div className="flex-1 p-8">
-              <div className="space-y-8">
-                <div className="border-b pb-4">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">Profile Information</h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
-                      <div className="flex items-center space-x-4">
-                        <div className="relative">
-                          {profileImage ? (
-                            <img
-                              src={profileImage}
-                              alt="Profile"
-                              className="w-20 h-20 rounded-full object-cover border-2 border-gray-300"
-                              onError={() => setProfileImage(null)}
-                            />
-                          ) : (
-                            <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex">
-                          <input
-                            type="file"
-                            id="imageUpload"
-                            onChange={handleImageUpload}
-                            hidden
-                            accept="image/*"
-                          />
-                          <label
-                            htmlFor="imageUpload"
-                            className="bg-blue-500 text-white px-4 py-2 rounded-l-lg cursor-pointer hover:bg-blue-600 transition flex items-center justify-center"
-                          >
-                            {uploading ? (
-                              <span className="flex items-center">
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Uploading...
-                              </span>
+            {/* Content Area */}
+            <div className="flex-1 p-8">
+              {activeTab === "profile" && (
+                <div className="space-y-8">
+                  {/* Profile Information Section */}
+                  <div className="border-b pb-4">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Profile Information</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Profile Picture Upload */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+                        <div className="flex items-center space-x-4">
+                          <div className="relative">
+                            {profileImage ? (
+                              <img
+                                src={profileImage}
+                                alt="Profile"
+                                className="w-20 h-20 rounded-full object-cover border-2 border-gray-300"
+                                onError={() => setProfileImage(null)}
+                              />
                             ) : (
-                              "Change Photo"
+                              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                </svg>
+                              </div>
                             )}
-                          </label>
-                          {profileImage && (
-                            <button
-                              className="bg-red-500 text-white px-4 py-2 rounded-r-lg hover:bg-red-600 transition"
-                              onClick={handleDeleteImage}
+                          </div>
+                          <div className="flex">
+                            <input
+                              type="file"
+                              id="imageUpload"
+                              onChange={handleImageUpload}
+                              hidden
+                              accept="image/*"
+                            />
+                            <label
+                              htmlFor="imageUpload"
+                              className="text-blue-600 font-semibold py-6 hover:bg-blue-400 hover:text-white px-4 py-2 rounded-l-lg cursor-pointer  transition flex items-center justify-center"
                             >
-                              Remove
-                            </button>
-                          )}
+                              {uploading ? "Uploading..." : "Change Photo"}
+                            </label>
+                            {profileImage && (
+                              <button
+                                className="text-red-600 font-semibold px-6 py-3 rounded-lg hover:bg-red-400 hover:text-white px-4 py-2 rounded-r-lg "
+                                onClick={handleDeleteImage}
+                              >
+                                Remove  
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
+                  {/* Personal Information */}
                   <div>
                     <h3 className="text-xl font-bold text-gray-800 mb-4">Personal Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -411,7 +408,7 @@ const AccountPage = () => {
 
                     <div className="mt-8">
                       <button 
-                        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md flex items-center"
+                        className="bg-blue-100  text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-blue-400 hover:text-white transition shadow-md flex items-center"
                         onClick={handleSaveChanges}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -422,8 +419,9 @@ const AccountPage = () => {
                     </div>
                   </div>
                 </div>
-             
+              )}
 
+              {/* Other Tabs */}
               {activeTab === "address" && renderEmptyState("Address Book", "Add New Address")}
               {activeTab === "payment" && renderEmptyState("Payment Options", "Add Payment Method")}
               {(activeTab === "orders" || activeTab === "wishlist" || activeTab === "settings") && renderDevelopmentPlaceholder()}

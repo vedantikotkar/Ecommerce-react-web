@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaHeart, FaShoppingCart, FaUser, FaSearch, FaRobot, FaTimes } from "react-icons/fa";
+import { FaHeart, FaShoppingCart, FaUser, FaSearch, FaRobot, FaTimes,FaPaperPlane } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
   const [showChatbot, setShowChatbot] = useState(false); // State to manage chatbot visibility
   const [messages, setMessages] = useState([{ sender: "bot", text: "Hello! How can I help you?" }]); // Initial chatbot message
   const [userInput, setUserInput] = useState("");
@@ -35,6 +36,22 @@ const Navbar = () => {
     };
   }, [showDropdown]);
 
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+    if (!userInput.trim()) return;
+
+    const userMessage = { sender: "user", text: userInput };
+    setMessages([...messages, userMessage]);
+    setUserInput("");
+
+    try {
+      const response = await axios.post("http://localhost:5000/chat", { message: userInput });
+      const botResponse = { sender: "bot", text: response.data.reply };
+      setMessages((prevMessages) => [...prevMessages, botResponse]);
+    } catch (error) {
+      setMessages((prevMessages) => [...prevMessages, { sender: "bot", text: "Error reaching the chatbot." }]);
+    }
+  };
   // Handle search form submission
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -68,10 +85,8 @@ const Navbar = () => {
     <>
       <nav className="w-full fixed top-0 left-0 bg-white shadow-md z-50 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4">
-          
-          {/* Logo */}
-          <div 
-            className="text-xl font-bold text-gray-900 cursor-pointer" 
+          <div
+            className="text-xl font-bold text-gray-900 cursor-pointer"
             onClick={() => navigate("/")}
           >
             E-Shop
@@ -87,38 +102,38 @@ const Navbar = () => {
 
           {/* Navbar Icons */}
           <div className="flex items-center space-x-5">
-            
+
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="relative hidden sm:flex items-center bg-gray-200 rounded-full px-4 py-1 w-72">
+            <form onSubmit={handleSearch} className="relative hidden sm:flex items-center bg-gray-100 rounded-full px-4 py-1 w-72">
               <input
                 type="text"
                 placeholder="Search..."
-                className="bg-transparent outline-none w-full text-sm text-gray-700"
+                className="bg-transparent outline-none w-full text-sm text-gray-600"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <button type="submit" className="absolute right-3 text-gray-600 hover:text-gray-800">
+              <button type="submit" className="absolute right-3 text-gray-600">
                 <FaSearch />
               </button>
             </form>
 
             {/* Wishlist Icon */}
-            <FaHeart 
+            <FaHeart
               className="text-xl text-gray-700 cursor-pointer hover:text-red-500 transition"
               onClick={() => navigate("/wishlist")}
             />
 
             {/* Shopping Cart Icon */}
-            <FaShoppingCart 
+            <FaShoppingCart
               className="text-xl text-gray-700 cursor-pointer hover:text-blue-500 transition"
               onClick={() => navigate("/cart")}
             />
 
             {/* Profile Dropdown */}
             <div className="relative" ref={dropdownRef}>
-              <FaUser 
+              <FaUser
                 className="text-xl text-gray-700 cursor-pointer hover:text-green-500 transition"
-                onClick={toggleDropdown} 
+                onClick={toggleDropdown}
               />
               {showDropdown && (
                 <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-md py-2 w-40">
@@ -130,56 +145,56 @@ const Navbar = () => {
                 </div>
               )}
 
-             
-      <div 
-        className="fixed bottom-5 right-5 bg-blue-500 hover:bg-blue-600 text-white 
+
+              <div
+                className="fixed bottom-5 right-5 bg-blue-500 hover:bg-blue-600 text-white 
                    p-4 rounded-full shadow-lg cursor-pointer transition duration-300 
                    flex items-center justify-center w-16 h-16"
-        onClick={() => setShowChatbot(true)}
-      >
-        <FaRobot className="text-3xl" />
-      </div>
+                onClick={() => setShowChatbot(true)}
+              >
+                <FaRobot className="text-3xl" />
+              </div>
 
 
-      {/* Chatbot Modal */}
+                {/* Chatbot UI */}
       {showChatbot && (
-        <div className="fixed bottom-20 right-5 w-80 bg-white shadow-xl rounded-lg border border-gray-300">
-          <div className="bg-blue-500 text-white p-3 flex justify-between items-center">
-            <span>Chatbot</span>
+        <div className="fixed bottom-5 right-5 w-80 bg-white shadow-lg rounded-lg">
+          <div className="flex justify-between items-center bg-blue-100 text-blue-600 p-3  font-semibold rounded-t-lg">
+            <h2>Chatbot</h2>
             <FaTimes className="cursor-pointer" onClick={() => setShowChatbot(false)} />
           </div>
-          <div className="p-3 h-60 overflow-y-auto flex flex-col">
+
+          <div className="p-3 h-64 overflow-y-auto">
             {messages.map((msg, index) => (
-              <div key={index} className={`mb-2 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
-                <span className={`inline-block px-3 py-1 rounded-md ${msg.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
-                  {msg.text}
-                </span>
+              <div key={index} className={`mb-2 p-2 rounded-lg ${msg.sender === "user" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}>
+                {msg.text}
               </div>
             ))}
           </div>
-          <div className="p-2 border-t border-gray-300 flex">
-            <input 
-              type="text" 
-              className="flex-grow outline-none px-2 py-1 border rounded-md" 
-              placeholder="Type a message..." 
-              value={userInput} 
+          <form onSubmit={handleChatSubmit} className="flex p-3 border-t">
+            <input
+              type="text"
+              className="flex-1 p-2 border rounded-l-md"
+              placeholder="Type a message..."
+              value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
             />
-            <button className="ml-2 bg-blue-500 text-white px-3 py-1 rounded-md" onClick={sendMessage}>
-              Send
+            <button type="submit" className="bg-blue-100 text-blue-600 px-3 py-2 rounded-r-md">
+              <FaPaperPlane />
             </button>
-          </div>
+          </form>
         </div>
-      )}
- 
+             
+              )}
+
             </div>
           </div>
         </div>
       </nav>
 
-      
-      </>
-      
+
+    </>
+
   );
 };
 

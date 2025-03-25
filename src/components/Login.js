@@ -70,7 +70,7 @@ const Login = () => {
 
         {/* Login Button */}
         <button
-          className="w-3/5 p-3 bg-red-500 text-white rounded-md cursor-pointer hover:bg-red-600 transition"
+          className="w-3/5 p-3 bg-red-100 text-red-600 font-semibold rounded-md cursor-pointerhover:bg-red-400 hover:text-white transition"
           onClick={handleLogin}
         >
           Log In
@@ -78,7 +78,7 @@ const Login = () => {
 
         {/* Forgot Password */}
         <p className="mt-3 text-sm">
-          <a href="/forgot-password" className="text-purple-600 hover:underline">
+          <a href="/forgot-password" className="text-blue-600 ">
             Forgot Password?
           </a>
         </p>
