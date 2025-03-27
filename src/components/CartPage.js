@@ -405,19 +405,19 @@ const CartPage = ({
   const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen bg-white-50">
       <div className="max-w-7xl mx-auto p-8">
         {/* Header */}
         <div className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between">
-          <h1 className="text-4xl font-bold text-blue-900 mb-4 md:mb-0">Shopping Cart</h1>
+          <h1 className="text-4xl font-bold text-black-900 mb-4 md:mb-0"> </h1>
           <div className="text-sm breadcrumbs flex items-center text-blue-600">
             <span 
               className="hover:bg-blue-100 px-2 py-1 rounded-md cursor-pointer transition-colors" 
               onClick={() => onNavigate("home")}
             >
-              Home
+            
             </span>
-            <ChevronRight size={16} className="mx-2 text-blue-400" />
+            <ChevronRight size={16} className="mx-2 text-black-400" />
             <span className="font-medium text-blue-800">Cart ({itemCount} items)</span>
           </div>
         </div>
@@ -426,28 +426,28 @@ const CartPage = ({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Cart Items */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-blue-100">
-                <div className="p-6 bg-blue-50 border-b border-blue-100">
-                  <h2 className="text-2xl font-bold text-blue-900 flex items-center">
-                    <ShoppingBag size={24} className="mr-3 text-blue-600" />
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-orange-100">
+                <div className="p-6 bg-orange-50 border-b border-orange-100">
+                  <h2 className="text-xl font-bold text-orange-900 flex items-center">
+                    <ShoppingBag size={24} className="mr-2 text-orange-600" />
                     Cart Items
                   </h2>
                 </div>
                 
-                <div className="divide-y divide-blue-100">
+                <div className="divide-y divide-orange-100">
                   {cart.map((item) => (
                     <div 
                       key={item.id} 
-                      className="p-6 flex flex-col sm:flex-row items-center hover:bg-blue-50 transition duration-300 group"
+                      className="p-6 flex flex-col sm:flex-row items-center transition duration-300 group"
                     >
                       <div className="relative">
                         <img 
                           src={item.imageUrl} 
                           alt={item.productName} 
-                          className="w-28 h-28 object-cover rounded-xl shadow-md group-hover:scale-105 transition-transform"
+                          className="w-28 h-28 object-cover  object-contain rounded-xl shadow-md group-hover:scale-105 transition-transform"
                         />
                         {item.discountPercentage && (
-                          <span className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
+                          <span className="absolute top-0 right-0 bg-green-50 text-green-600 text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
                             -{item.discountPercentage}%
                           </span>
                         )}
@@ -455,21 +455,21 @@ const CartPage = ({
                       
                       <div className="sm:ml-6 flex-1 mt-4 sm:mt-0">
                         <div className="flex flex-col sm:flex-row sm:justify-between">
-                          <h3 className="text-xl font-bold text-blue-900">{item.productName}</h3>
-                          <p className="text-xl font-bold text-blue-800">${(item.price * item.quantity).toFixed(2)}</p>
+                          <h3 className="text-l font-semibold text-black-900">{item.productName}</h3>
+                          <p className="text-l font-semibold text-semibold-800">${(item.price * item.quantity).toFixed(2)}</p>
                         </div>
                         
                         <div className="flex items-center justify-between mt-4">
-                          <div className="flex items-center bg-blue-50 rounded-full p-1">
+                          <div className="flex items-center bg-pink-50 rounded-full p-1">
                             <button 
-                              className="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors"
+                              className="w-8 h-8 flex items-center justify-center bg-pink-100 text-pink-600 rounded-full hover:bg-pink-200 transition-colors"
                               onClick={() => handleQuantityChange(item.id, -1)}
                             >
                               -
                             </button>
-                            <span className="mx-3 text-blue-800 font-medium w-6 text-center">{item.quantity}</span>
+                            <span className="mx-3 text-pink-800 font-medium w-6 text-center">{item.quantity}</span>
                             <button 
-                              className="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors"
+                              className="w-8 h-8 flex items-center justify-center bg-pink-100 text-pink-600 rounded-full hover:bg-pink-200 transition-colors"
                               onClick={() => handleQuantityChange(item.id, 1)}
                             >
                               +
@@ -495,7 +495,7 @@ const CartPage = ({
             <div className="lg:col-span-1">
               <div className="bg-white rounded-2xl shadow-2xl border border-blue-100 p-8 sticky top-10">
                 <div className="border-b border-blue-100 pb-6 mb-6">
-                  <h2 className="text-3xl font-bold text-blue-900 flex items-center">
+                  <h2 className="text-xl font-bold text-blue-900 flex items-center">
                     <CreditCard size={28} className="mr-3 text-blue-600" />
                     Order Summary
                   </h2>
@@ -503,8 +503,8 @@ const CartPage = ({
                 
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-lg text-blue-700">Subtotal</span>
-                    <span className="text-xl font-bold text-blue-900">${subtotal.toFixed(2)}</span>
+                    <span className="text-sm text-blue-700 font-semibold">Subtotal</span>
+                    <span className="text-sm font-semibold text-blue-900">${subtotal.toFixed(2)}</span>
                   </div>
                   
                   {appliedCoupon && (
@@ -521,27 +521,27 @@ const CartPage = ({
                           <Trash2 size={14} />
                         </button>
                       </div>
-                      <span className="text-lg font-bold">-${discount.toFixed(2)}</span>
+                      <span className="text-sm font-bold">-${discount.toFixed(2)}</span>
                     </div>
                   )}
                   
                   <div className="flex justify-between items-center">
-                    <span className="text-lg text-blue-700">Shipping</span>
-                    <span className={`text-xl font-bold ${shipping === 0 ? 'text-green-600' : 'text-blue-900'}`}>
+                    <span className="text-sm text-blue-700 font-semibold">Shipping</span>
+                    <span className={`text-sm font-semibold ${shipping === 0 ? 'text-green-600' : 'text-blue-900'}`}>
                       {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
                     </span>
                   </div>
                   
                   <div className="border-t border-blue-100 pt-6 mt-6">
                     <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold text-blue-900">Total</span>
-                      <span className="text-3xl font-bold text-blue-900">${total.toFixed(2)}</span>
+                      <span className="text-sm font-semibold text-blue-900">Total</span>
+                      <span className="text-sm font-semibold text-blue-900">${total.toFixed(2)}</span>
                     </div>
                   </div>
                   
                   {!showCouponField && !appliedCoupon && (
                     <button 
-                      className="w-full flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 py-3 rounded-lg transition-colors mt-4"
+                      className="w-full flex items-center justify-center bg-green-50 text-green-600 hover:bg-green-100 py-3 rounded-lg transition-colors mt-4"
                       onClick={() => setShowCouponField(true)}
                     >
                       <Gift size={20} className="mr-2" />
@@ -559,7 +559,7 @@ const CartPage = ({
                         onChange={(e) => setCouponCode(e.target.value)}
                       />
                       <button 
-                        className="bg-blue-600 text-white px-6 py-3 rounded-r-lg hover:bg-blue-700 transition-colors"
+                        className="hover:text-red-500 hover:bg-red-50 bg-red-50 text-red-600 px-6 py-3 rounded-r-lg hover:bg-blue-700 transition-colors"
                         onClick={applyCoupon}
                       >
                         Apply
@@ -568,7 +568,7 @@ const CartPage = ({
                   )}
                   
                   <button 
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-colors flex items-center justify-center mt-6"
+                    className="w-full bg-blue-100 text-blue-600 font-semibold py-4 px-4 rounded-lg transition-colors flex items-center hover:text-blue-500 hover:bg-blue-50 justify-center mt-6"
                     onClick={() => onNavigate("checkout")}
                   >
                     <CheckCircle size={22} className="mr-2" />

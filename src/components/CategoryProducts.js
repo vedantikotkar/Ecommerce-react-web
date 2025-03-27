@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaHeart, FaShoppingCart } from "react-icons/fa";
 
 const CategoryProducts = () => {
   const { categoryId } = useParams();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categoryName, setCategoryName] = useState("");
+  const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
     axios
@@ -20,6 +22,18 @@ const CategoryProducts = () => {
       .catch((error) => console.error("Error fetching products:", error));
   }, [categoryId]);
 
+  const handleWishlist = (product) => {
+    if (wishlist.some((item) => item.id === product.id)) {
+      setWishlist(wishlist.filter((item) => item.id !== product.id));
+    } else {
+      setWishlist([...wishlist, product]);
+    }
+  };
+
+  const addToCart = (product) => {
+    console.log("Added to cart:", product);
+  };
+
   return (
     <div className="p-5 flex-1">
       <h2 className="text-3xl font-bold mb-6">{categoryName} Products</h2>
@@ -28,29 +42,53 @@ const CategoryProducts = () => {
           products.map((product) => (
             <div
               key={product.id}
-              className="border border-gray-300 p-3 w-52 rounded-lg text-center shadow-md hover:shadow-lg transition duration-300"
+              className="bg-white shadow-md rounded-lg overflow-hidden w-64"
             >
-              <img
-                src={product.imageUrl}
-                alt={product.productName}
-                className="w-full h-40 object-cover mb-4 rounded-lg cursor-pointer"
-                onClick={() => navigate(`/productdetail/${product.id}`)}
-              />
-              <h3 className="text-lg font-semibold mb-2">{product.productName}</h3>
-              <div className="w-full p-3 text-center">
-                <div className="inline-block bg-green-800 text-white px-3 py-1 text-sm font-bold rounded-md">
-                  {product.rating} ★
+              <div className="relative p-4">
+                <img
+                  src={product.imageUrl}
+                  alt={product.productName}
+                  className="w-full h-40 object-contain cursor-pointer"
+                  onClick={() => navigate(`/productdetail/${product.id}`)}
+                />
+                <FaHeart
+                  className={`absolute top-2 right-2 text-xl cursor-pointer ${
+                    wishlist.some((item) => item.id === product.id)
+                      ? "text-black-500"
+                      : "text-gray-400"
+                  }`}
+                  onClick={() => handleWishlist(product)}
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="text-sm font-semibold">{product.productName}</h3>
+                <div className="flex items-center text-yellow-500 text-sm">
+                  <span>{product.rating} ★</span>
+                  <span className="ml-2 text-gray-500">
+                    ({product.reviewCount} reviews)
+                  </span>
                 </div>
-                <span className="text-gray-600 ml-2">({product.reviewCount})</span>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-sm font-semibold text-gray-800">
+                    ${product.price}
+                  </span>
+                  <span className="text-sm text-red-600 font-semibold">
+                    {product.discountPercentage}% OFF
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-center items-center gap-2 mt-2">
-                <span className="text-lg font-bold text-red-600">${product.price}</span>
-                <span className="text-sm text-red-500">{product.discountPercentage}% OFF</span>
-              </div>
+              <button
+                className="w-full bg-blue-100 text-blue-600 font-semibold py-3 rounded-b-md flex items-center justify-center hover:bg-blue-400 hover:text-white transition"
+                onClick={() => addToCart(product)}
+              >
+                <FaShoppingCart className="mr-2" /> Add to Cart
+              </button>
             </div>
           ))
         ) : (
-          <p className="text-gray-600 text-lg">No products found for this category.</p>
+          <p className="text-gray-600 text-lg">
+            No products found for this category.
+          </p>
         )}
       </div>
     </div>

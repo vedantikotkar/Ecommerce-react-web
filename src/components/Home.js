@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar";
 import ImageSlider from "./ImageSlider";
 import TodaysDeals from "./TodaysDeals";
 import RecommendedProducts from "./RecommendedProducts";
+import AllProducts from "./AllProducts";
 
 const Home = () => {
   return (
@@ -16,6 +17,7 @@ const Home = () => {
       </div>
       <TodaysDeals />
       <RecommendedProducts />
+      <AllProducts />
     </div>
   );
 };

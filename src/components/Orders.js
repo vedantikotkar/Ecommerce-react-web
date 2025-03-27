@@ -173,7 +173,7 @@ const Review = ({ orderId }) => {
       />
       <button
         type="submit"
-        className="mt-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+        className="mt-2 bg-blue-100  text-blue-600  px-3 py-1 rounded hover:bg-blue-400 hover:text-white transition"
       >
         Submit
       </button>

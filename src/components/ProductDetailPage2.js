@@ -181,7 +181,7 @@ export default function ProductDetails() {
             <span className="mx-2">/</span>
             <span className="hover:text-indigo-500 cursor-pointer">{product.category?.name || "Products"}</span>
             <span className="mx-2">/</span>
-            <span className="text-gray-700 font-medium">{product.productName}</span>
+            <span className="text-gray-700 font-sm">{product.productName}</span>
           </div>
         </div>
       </div>
@@ -238,31 +238,81 @@ export default function ProductDetails() {
               {/* Product Title and Badges */}
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{product.productName}</h1>
+                  <h1 className="text-2l md:text-l font-bold text-gray-800 mb-1">{product.productName}</h1>
                   <div className="flex items-center">
                     <span className="text-indigo-600 font-medium mr-4">{product.brand}</span>
                     <div className="flex items-center">
-                      {renderRating(product.rating || 4.5)}
-                      <span className="ml-2 text-gray-500 text-sm">({product.reviews || 120} reviews)</span>
+                      {renderRating(product.rating)}
+                      <span className="ml-2 text-gray-500 text-sm">({product.reviewCount} reviews)</span>
                     </div>
                   </div>
+                  <div className="flex items-center">
+                  <span className="ml-2 text-black-500 font-semibold text-sm">Available Colors :  {product.availableColors} </span>
+                  
+                  <span className="ml-2 text-red-500 font-semibold text-sm">{product.discountPercentage} %OFF</span>
+
+                  </div>
+                  <div className="flex items-center">
+
+                  <span className="ml-2 text-black-500 font-semibold text-sm">Material :  {product.material} </span>
+                  <span className="ml-2 text-black-500 font-semibold text-sm">Available Sizes :  {product.availableSizes} </span>
+   
+                  </div>
+                  
+                  <div className="flex items-center">
+
+
+
+                  <span className="ml-2 text-black-500 font-semibold text-sm">brand :  {product.brand} </span>
+                  <span className="ml-2 text-black-500 font-semibold text-sm">Available quantity :  {product.quantity} </span>
+   
+                  </div>
+
+
+                  <div className="flex items-center">
+
+
+
+<span className="ml-2 text-black-500 font-semibold text-sm">Return Availability :  {product.returnAvailable} </span>
+<span className="ml-2 text-black-500 font-semibold text-sm">Free  Delivery :  {product.freeDelivery} </span>
+
+</div>
+
+
+
+<div className="flex items-center">
+
+
+
+<span className="ml-2 text-black-500 font-semibold text-sm">Description :  {product.description} </span>
+<span className="ml-2 text-black-500 font-semibold text-sm">weight :  {product.weight} </span>
+
+</div>
+
+<div className="flex items-center">
+
+
+
+<span className="ml-2 text-black-500 font-semibold text-sm">Dimension :  {product.dimensions} </span>
+<span className="ml-2 text-black-500 font-semibold text-sm">Brand Origin :  {product.brandOrigin} </span>
+
+</div>
+
+
+<div className="flex items-center">
+
+
+
+<span className="ml-2 text-black-500 font-semibold text-sm">Shipping cost :  {product.shippingCost} </span>
+<span className="ml-2 text-black-500 font-semibold text-sm">return policy available:  {product.returnPolicy} </span>
+
+</div>
+        
                 </div>
                 <div className="bg-green-50 text-green-600 text-sm font-medium px-3 py-1 rounded-full">In Stock</div>
               </div>
 
-              {/* Price */}
-              <div className="flex items-end space-x-3 mb-6 mt-4">
-                <div className="text-3xl font-bold text-gray-800">${parseFloat(product.price).toFixed(2)}</div>
-                {product.originalPrice && (
-                  <>
-                    <div className="text-lg text-gray-500 line-through">${parseFloat(product.originalPrice).toFixed(2)}</div>
-                    <div className="bg-red-50 text-red-600 px-2 py-1 rounded text-sm font-semibold">
-                      {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                    </div>
-                  </>
-                )}
-              </div>
-
+             
               {/* Divider */}
               <div className="h-px bg-gray-100 my-6"></div>
 
@@ -300,7 +350,7 @@ export default function ProductDetails() {
               {product.sizes && product.sizes.length > 0 && (
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-medium text-gray-700">Size</h3>
+                    <h3 className="font-sm text-gray-700">size</h3>
                     <span className="text-indigo-600 text-sm font-medium">Size Guide</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -344,8 +394,8 @@ export default function ProductDetails() {
                   
                   <div className="ml-4 text-sm text-gray-500">
                     {product.stock > 10 
-                      ? <span className="text-green-600">In Stock</span>
-                      : <span className="text-orange-500">Only {product.stock || 8} left</span>
+                      ? <span className="text-green-600">{product.isActive}</span>
+                      : <span className="text-orange-500  font-semibold">Only {product.quantity} left</span>
                     }
                   </div>
                 </div>
@@ -354,7 +404,12 @@ export default function ProductDetails() {
                 {/* Size Selector */}
           <div className="flex flex-col items-start mb-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Size</h3>
+            <span className="ml-2 text-black-500 font-semibold text-sm">Available Sizes :  {product.availableSizes} </span>
+   
             <div className="flex items-center bg-gray-100 rounded-lg shadow-md">
+
+           
+
               <button
                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-l-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setSizeIndex(Math.max(0, sizeIndex - 1))}
@@ -377,7 +432,7 @@ export default function ProductDetails() {
               {/* Action Buttons */}
               <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6 mt-8">
                 <button
-                  className="md:col-span-3 h-14 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center relative overflow-hidden"
+                  className="md:col-span-3 h-14 bg-blue-100 text-blue-600 text-base  hover:text-blue-500 hover:bg-blue-50 font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center relative overflow-hidden"
                   onClick={handleAddToCart}
                 >
                   <div className={`flex items-center justify-center w-full h-full absolute transition-transform duration-300 ${addedToCart ? '-translate-y-full' : 'translate-y-0'}`}>
@@ -435,9 +490,9 @@ export default function ProductDetails() {
                     value={postalCode}
                     onChange={(e) => setPostalCode(e.target.value)}
                     placeholder="Enter Postal Code"
-                    className="border border-gray-300 rounded-l-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent"
+                    className="border border-black-300 rounded-l-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent"
                   />
-                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 rounded-r-lg transition-colors duration-200">
+                  <button className="bg-red-100 text-red-600 px-6 rounded-r-lg  font-semibold transition-colors duration-200 hover:text-red-500 hover:bg-red-50">
                     Check
                   </button>
                 </div>
@@ -488,6 +543,7 @@ export default function ProductDetails() {
                     "Premium quality materials",
                     "Ergonomic design for comfort",
                     "Durable construction",
+                    product.material,
                     "Water-resistant finish",
                     "Easy to clean",
                     "Lightweight yet sturdy",
@@ -584,7 +640,7 @@ export default function ProductDetails() {
                   className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 transform hover:-translate-y-1 cursor-pointer"
                   onClick={() => navigate(`/product/${relatedProduct.id}`)}
                 >
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relativew full h-40 object-contain cursor-pointer  object-fit-cover">
                     <img
                       src={relatedProduct.imageUrl}
                       alt={relatedProduct.productName}
@@ -604,19 +660,18 @@ export default function ProductDetails() {
                   </div>
 
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">{relatedProduct.productName}</h3>
+                    <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">{relatedProduct.productName }</h3>
                     <div className="flex items-center text-yellow-400 text-sm mb-2">
                       <Star size={14} fill="currentColor" />
-                      <span className="ml-1 text-gray-600">{relatedProduct.rating || 4.5}</span>
+                      <span className="ml-1 text-gray-600">{relatedProduct.rating } </span>
+                      <span className="ml-1 text-gray-600">  {relatedProduct.reviewCount}  (reviews)</span>
                     </div>
                     
                     <div className="flex justify-between items-center mt-3">
-                      <div>
-                        <span className="font-bold text-gray-800">${relatedProduct.price}</span>
-                        {relatedProduct.originalPrice && (
-                          <span className="text-sm text-gray-500 line-through ml-2">${relatedProduct.originalPrice}</span>
-                        )}
-                      </div>
+                  
+                  <span className="text-l font-semibold text-gray-800">${product.price}</span>
+                  <span className="ml-10 text-sm text-red-500 font-semibold">{product.discountPercentage}% OFF</span>
+                
                       <button
                         className="w-10 h-10 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center transition-colors duration-200"
                         onClick={(e) => {

@@ -97,7 +97,7 @@ const TodaysDeals = () => {
                 </div>
                 <div className="mt-2">
                   <span className="text-l font-semibold text-gray-800">${product.price}</span>
-                  <span className="ml-2 text-sm text-red-500 font-semibold">{product.discountPercentage}% OFF</span>
+                  <span className="ml-10 text-sm text-red-500 font-semibold">{product.discountPercentage}% OFF</span>
                 </div>
               </div>
             </div>

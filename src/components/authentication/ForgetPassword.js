@@ -25,7 +25,7 @@ const ForgetPassword = () => {
 
       {/* Right Form Section */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-8">
-        <h2 className="text-2xl font-semibold text-gray-800">Forgot Password?</h2>
+        <h2 className="text-2xl font-semibold ">Forgot Password?</h2>
         <p className="text-gray-600 text-center mt-2">
           Enter your email below and we'll send you a reset link.
         </p>
@@ -42,7 +42,7 @@ const ForgetPassword = () => {
           />
           <button
             type="submit"
-            className="w-full bg-red-600 text-white py-2 rounded-md mt-4 hover:bg-red-700 transition"
+            className="w-full bg-red-100  font-semibold text-red-600  py-2 rounded-md mt-4 hover:bg-red-400 hover:text-white transition"
           >
             Send Reset Link
           </button>

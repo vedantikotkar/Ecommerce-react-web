@@ -18,7 +18,7 @@ const Sidebar = () => {
       <ul className="space-y-4">
         {categories.length > 0 ? (
           categories.map((category) => (
-            <li key={category.id} className="p-3 rounded-md hover:bg-blue-200 hover:text-white">
+            <li key={category.id} className="p-3 rounded-md hover:bg-blue-100 hover:text-white">
               <Link to={`/category/${category.id}`} className="text-sm  font-bold text-black hover:text-white">
                 {category.name}
               </Link>

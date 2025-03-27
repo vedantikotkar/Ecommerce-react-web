@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
 const images = [
-  "/frame.webp",
-  "/frame.webp",
-  "/frame.webp",
-  "/frame.webp",
+  "/iphone2.webp",
+  "/coffee3.jpg",
+  "/juice.jpg",
+  "/frame3.jpg",
+  "/burger.webp",
 ];
 
 const ImageSlider = () => {
@@ -15,12 +16,12 @@ const ImageSlider = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-half h-screen object-cover overflow-hidden">
       {/* Slide Image */}
       <img
         src={images[currentIndex]}
         alt="Slide"
-        className="w-full h-full object-cover"
+        className="w-half h-half object-cover"
       />
 
       {/* Dots Overlay */}

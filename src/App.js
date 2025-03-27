@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import CreateAccount from "./components/CreateAccount";
-import Login from "./components/Login";
+import CreateAccount from "./components/authentication/CreateAccount";
+import Login from "./components/authentication/Login";
 import Home from "./components/Home"
 import TodaysDeals from "./components/TodaysDeals";
 import Wishlist from "./components/Wishlist";
 import "./App.css";
 import CartPage from "./components/CartPage";
 import CheckoutPage from "./components/CheckoutPage";
-import Account from "./components/Account";
+import Account from "./components/account/MyAccount";
 import ContactPage from "./components/ContactPage";
 import ProductDetail from "./components/ProductDetailsPage";
-import EmailOTPLogin from "./components/Verify";
+import EmailOTPLogin from "./components/authentication/Verify";
 import RecommendedProducts from "./components/RecommendedProducts";
 import Orders from "./components/Orders";
 import SearchResults from "./components/SearchResults";
@@ -25,15 +25,16 @@ import AboutPage from "./components/AboutPage";
 import CategoryProducts from "./components/CategoryProducts";
 import AllProducts from "./components/AllProducts";
 import Navbar from "./components/Navbar";
-import Logout from "./components/Logout";
-import ForgetPassword from "./components/ForgetPassword";
+import Logout from "./components/authentication/Logout";
+import ForgetPassword from "./components/authentication/ForgetPassword";
 import PaymentIntegration from "./components/PaymentIntegration";
 import PaymentFailed from "./components/PaymentFailed";
 import Chatbot from "./components/Chatbot";
 // import ReCAPTCHA from "react-google-recaptcha";
 import CheckboxRecaptcha from "./components/CheckboxRecaptcha";
-import CompleteVerification from "./components/CompleteVerification"
+import CompleteVerification from "./components/authentication/CompleteVerification"
 import ProductDetails from "./components/ProductDetailPage2";
+import AccountSettings from "./components/account/AccountSettings";
 function App() {
   const [userAddress, setUserAddress] = useState("");
   return (
@@ -65,6 +66,7 @@ function App() {
           <Route path="/payment-integration" element={<PaymentIntegration />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
           <Route path="/chatbot" element={<Chatbot/>} />
+          <Route path="/account-setting" element={<AccountSettings/>} />
           {/* <Route path="/recaptcha" element={<ReCAPTCHA/>} /> */}
           <Route path="/recaptcha2" element={<CheckboxRecaptcha/>} />
           <Route path="/complete-verfication" element={<CompleteVerification/>} />
