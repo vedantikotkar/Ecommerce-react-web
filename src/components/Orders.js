@@ -43,18 +43,35 @@ const Orders = () => {
     }
   };
 
-  const handleRatingSubmit = async (orderId, rating) => {
+  const handleRatingSubmit = async (productId, rating) => {
     try {
-      const response = await fetch(`http://localhost:4000/orders/${orderId}/rating`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating }),
-      });
+      const response = await fetch(
+        `http://localhost:4000/rated-products/rate?userId=${userId}&productId=${productId}&rating=${rating}`,
+        {
+          method: "POST",
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to submit rating");
-      console.log(`Rating for Order ${orderId} submitted successfully.`);
+      alert("Rating submitted!");
     } catch (error) {
       console.error("Error submitting rating:", error);
+    }
+  };
+
+  const handleReviewSubmit = async (productId, review) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/reviewed-products/review?userId=${userId}&productId=${productId}&review=${encodeURIComponent(review)}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to submit review");
+      alert("Review submitted!");
+    } catch (error) {
+      console.error("Error submitting review:", error);
     }
   };
 
@@ -67,7 +84,6 @@ const Orders = () => {
       if (!response.ok) throw new Error("Failed to delete order");
 
       setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderId));
-
       console.log(`Order ${orderId} deleted successfully.`);
     } catch (error) {
       console.error("Error deleting order:", error);
@@ -95,8 +111,8 @@ const Orders = () => {
                   <span className="text-gray-500">{order.date}</span>
                 </div>
                 <h3 className="text-lg font-semibold">{product.productName}</h3>
-                <Rating orderId={order.id} onRatingSubmit={handleRatingSubmit} />
-                <Review orderId={order.id} />
+                <Rating productId={order.productId} onRatingSubmit={handleRatingSubmit} />
+                <Review productId={order.productId} onReviewSubmit={handleReviewSubmit} />
               </div>
               <button
                 onClick={() => handleDeleteOrder(order.id)}
@@ -105,7 +121,6 @@ const Orders = () => {
               >
                 🗑️
               </button>
-
             </div>
           );
         })
@@ -114,12 +129,12 @@ const Orders = () => {
   );
 };
 
-const Rating = ({ orderId, onRatingSubmit }) => {
+const Rating = ({ productId, onRatingSubmit }) => {
   const [rating, setRating] = useState(0);
 
   const handleRating = (rate) => {
     setRating(rate);
-    onRatingSubmit(orderId, rate);
+    onRatingSubmit(productId, rate);
   };
 
   return (
@@ -140,29 +155,18 @@ const Rating = ({ orderId, onRatingSubmit }) => {
   );
 };
 
-const Review = ({ orderId }) => {
+const Review = ({ productId, onReviewSubmit }) => {
   const [review, setReview] = useState("");
 
-  const handleReviewSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`http://localhost:4000/orders/${orderId}/review`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ review }),
-      });
-
-      if (!response.ok) throw new Error("Failed to submit review");
-
-      console.log(`Review for Order ${orderId} submitted successfully.`);
-      setReview("");
-    } catch (error) {
-      console.error("Error submitting review:", error);
-    }
+    if (!review.trim()) return;
+    await onReviewSubmit(productId, review);
+    setReview("");
   };
 
   return (
-    <form onSubmit={handleReviewSubmit} className="mt-2">
+    <form onSubmit={handleSubmit} className="mt-2">
       <h4 className="text-sm font-medium">Leave a review:</h4>
       <textarea
         value={review}
@@ -173,7 +177,7 @@ const Review = ({ orderId }) => {
       />
       <button
         type="submit"
-        className="mt-2 bg-blue-100  text-blue-600  px-3 py-1 rounded hover:bg-blue-400 hover:text-white transition"
+        className="mt-2 bg-blue-100 text-blue-600 px-3 py-1 rounded hover:bg-blue-400 hover:text-white transition"
       >
         Submit
       </button>

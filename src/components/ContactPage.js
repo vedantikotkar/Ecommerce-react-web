@@ -51,14 +51,14 @@ const ContactPage = () => {
           <span className="text-3xl text-blue-500">📞</span>
           <h3 className="text-lg font-semibold text-gray-700">Call Us</h3>
           <p className="text-gray-600">Available 24/7, 7 days a week.</p>
-          <p className="font-semibold text-gray-800">+1 978-487-8379</p>
+          <p className="font-semibold text-gray-800">+919359339024</p>
         </div>
 
         <div className="mb-6 p-4 border rounded-lg hover:shadow-md transition bg-gray-50">
           <span className="text-3xl text-blue-500">📧</span>
           <h3 className="text-lg font-semibold text-gray-700">Email Us</h3>
           <p className="text-gray-600">We respond within 24 hours.</p>
-          <p className="font-semibold text-gray-800">customer@exclusive.com</p>
+          <p className="font-semibold text-gray-800">vedantikotkar45@gmail.com</p>
           <p className="font-semibold text-gray-800">support@exclusive.com</p>
         </div>
       </div>

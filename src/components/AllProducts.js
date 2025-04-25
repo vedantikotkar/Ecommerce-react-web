@@ -3,6 +3,8 @@ import axios from "axios";
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+const userId = "546a1fd0-214c-4877-ac15-c121f6d207f1"; // Set dynamically as needed
+
 const AllProducts = () => {
   const [recommended, setRecommended] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -12,52 +14,66 @@ const AllProducts = () => {
   useEffect(() => {
     axios
       .get("http://localhost:4000/products/all")
-      .then((response) => {
-        setRecommended(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching recommended products:", error);
-      });
+      .then((response) => setRecommended(response.data))
+      .catch((error) => console.error("Error fetching recommended products:", error));
   }, []);
 
   useEffect(() => {
-    const savedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(savedWishlist);
+    setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
   }, []);
 
-  const handleWishlist = (product) => {
-    let updatedWishlist = [...wishlist];
-    const index = updatedWishlist.findIndex(item => item.id === product.id);
-
-    if (index === -1) {
-      updatedWishlist.push(product);
-    } else {
-      updatedWishlist.splice(index, 1);
+  const addToCart = async (product) => {
+    try {
+      await axios.post(
+        `http://localhost:4000/cart-products/add?userId=${userId}&productId=${product.id}`
+      );
+      
+      const updatedCart = [...cart];
+      const existingProduct = updatedCart.find((item) => item.id === product.id);
+      if (existingProduct) {
+        existingProduct.quantity += 1;
+      } else {
+        updatedCart.push({ ...product, quantity: 1 });
+      }
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      alert(`${product.productName} added to cart!`);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
     }
-    setWishlist(updatedWishlist);
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-  }
+  };
 
-  const addToCart = (product) => {
-    const updatedCart = [...cart];
-    const existingProduct = updatedCart.find((item) => item.id === product.id);
-
-    if (existingProduct) {
-      existingProduct.quantity += 1;
-    } else {
-      updatedCart.push({ ...product, quantity: 1 });
+  const handleLikeUnlike = async (product) => {
+    const isLiked = wishlist.some((item) => item.id === product.id);
+    try {
+      if (isLiked) {
+        await axios.delete(
+          `http://localhost:4000/like/unlike?userId=${userId}&productId=${product.id}`
+        );
+      } else {
+        await axios.post(
+          `http://localhost:4000/like/liked?userId=${userId}&productId=${product.id}`
+        );
+      }
+      
+      const updatedWishlist = isLiked
+        ? wishlist.filter((item) => item.id !== product.id)
+        : [...wishlist, product];
+      setWishlist(updatedWishlist);
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
     }
-
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    alert(`${product.productName} added to cart!`);
   };
 
   return (
     <div className="container mx-auto p-10">
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-2xl font-semibold">Just For You</h2>
-        <button className="px-4 py-2 bg-green-100  text-green-600 font-semibold rounded-md hover:bg-green-400 hover:text-white" onClick={() => navigate("/cart")}>
+        <button
+          className="px-4 py-2 bg-green-100 text-green-600 font-semibold rounded-md hover:bg-green-400 hover:text-white"
+          onClick={() => navigate("/cart")}
+        >
           Go to Cart
         </button>
       </div>
@@ -68,8 +84,8 @@ const AllProducts = () => {
             <div key={product.id} className="bg-white shadow-md rounded-lg overflow-hidden p-4">
               <div className="relative">
                 <FaHeart
-                  className={`absolute top-2 right-2 text-l cursor-pointer ${wishlist.some(item => item.id === product.id) ? 'text-black-500' : 'text-gray-400'}`}
-                  onClick={() => handleWishlist(product)}
+                  className={`absolute top-2 right-2 text-sm cursor-pointer ${wishlist.some(item => item.id === product.id) ? 'text-black-500' : 'text-gray-400'}`}
+                  onClick={() => handleLikeUnlike(product)}
                 />
                 <img
                   src={product.imageUrl}
@@ -88,8 +104,10 @@ const AllProducts = () => {
                   <span className="text-sm font-semibold text-gray-800">${product.price}</span>
                   <span className="text-sm text-red-500 font-semibold">{product.discountPercentage}% OFF</span>
                 </div>
-                <button className="w-full mt-3 bg-blue-50 text-blue-600  font-semibold py-2 rounded-md flex items-center justify-center hover:bg-blue-400 hover:text-white
-  " onClick={() => addToCart(product)}>
+                <button
+                  className="w-full mt-3 bg-blue-50 text-blue-600 font-semibold py-2 rounded-md flex items-center justify-center hover:bg-blue-400 hover:text-white"
+                  onClick={() => addToCart(product)}
+                >
                   <FaShoppingCart className="mr-2" /> Add to Cart
                 </button>
               </div>

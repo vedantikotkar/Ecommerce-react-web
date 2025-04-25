@@ -40,7 +40,7 @@ const Wishlist = () => {
 
   const removeFromWishlist = async (productId) => {
     try {
-      await axios.delete(`http://localhost:4000/wishlist/remove/${productId}`);
+      await axios.delete(`http://localhost:4000/like/remove/product/${productId}`);
       setWishlist(wishlist.filter((product) => product.id !== productId));
     } catch (err) {
       console.error("Error removing from wishlist:", err);
@@ -49,23 +49,22 @@ const Wishlist = () => {
 
   const addToCart = async (product) => {
     try {
-      await axios.post("http://localhost:4000/cart-products/add", {
-        userId: "546a1fd0-214c-4877-ac15-c121f6d207f1",
-        productId: product.id,
-        quantity: 1,
-      });
-
+      await axios.post(
+        `http://localhost:4000/cart-products/add?userId=546a1fd0-214c-4877-ac15-c121f6d207f1&productId=${product.id}`
+      );
+  
       toast.success(`${product.productName} added to cart!`, {
         position: "top-right",
         autoClose: 3000,
       });
-
+  
       await removeFromWishlist(product.id);
     } catch (err) {
       console.error("Error adding to cart:", err);
       toast.error("Failed to add product to cart.");
     }
   };
+  
 
   return (
     <div className="container mx-auto p-10">
@@ -89,8 +88,8 @@ const Wishlist = () => {
         ) : error ? (
           <p className="col-span-full text-center text-red-500">{error}</p>
         ) : wishlist.length > 0 ? (
-          wishlist.map((product) => (
-            <div key={product.id} className="bg-white shadow-md rounded-lg overflow-hidden p-4">
+          wishlist.map((product,index) => (
+            <div key={`${product.id}-${index}`} className="bg-white shadow-md rounded-lg overflow-hidden p-4">
               <div className="relative">
                 <FaTrash
                   className="absolute top-2 right-2 text-sm text-gray-500 hover:text-red-500 cursor-pointer"

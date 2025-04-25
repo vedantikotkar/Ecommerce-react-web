@@ -83,7 +83,7 @@ const TodaysDeals = () => {
                   onClick={() => navigate(`/productdetail/${product.id}`)}
                 />
                 <FaHeart 
-                  className={`absolute top-2 right-2 text-l cursor-pointer transition ${
+                  className={`absolute top-2 right-2 text-sm cursor-pointer transition ${
                     wishlist.some(item => item.id === product.id) ? 'text-black-500' : 'text-gray-400'
                   }`}
                   onClick={() => handleWishlist(product)}

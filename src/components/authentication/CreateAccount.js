@@ -21,6 +21,8 @@ const CreateAccount = () => {
 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+   const [passwordStrength, setPasswordStrength] = useState(0);
+    const [password, setPassword] = useState("");
 
   const validateUsername = (username) => {
     if (!username) return "Username is required";
@@ -85,20 +87,42 @@ const CreateAccount = () => {
     setErrors(prev => ({ ...prev, [name]: error }));
   };
 
-  const validateForm = () => {
-    const newErrors = {
-      username: validateUsername(formData.username),
-      email: validateEmail(formData.email),
-      firstName: validateName(formData.firstName, "First Name"),
-      lastName: validateName(formData.lastName, "Last Name"),
-      password: validatePassword(formData.password)
-    };
+  // const validateForm = () => {
+  //   const newErrors = {
+  //     username: validateUsername(formData.username),
+  //     email: validateEmail(formData.email),
+  //     firstName: validateName(formData.firstName, "First Name"),
+  //     lastName: validateName(formData.lastName, "Last Name"),
+  //     password: validatePassword(formData.password)
+  //   };
 
+  //   setErrors(newErrors);
+
+  //   // Check if any errors exist
+  //   return !Object.values(newErrors).some(error => error !== "");
+  // };
+
+  // Form validation
+  const validateForm = (step) => {
+    const newErrors = {};
+    
+    if (step === 1) {
+      if (!formData.name) newErrors.name = "Name is required";
+      if (!formData.email) newErrors.email = "Email is required";
+      else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
+      if (!password) newErrors.password = "Password is required";
+      else if (passwordStrength < 3) newErrors.password = "Password is too weak";
+    } else if (step === 2) {
+      if (!formData.phone) newErrors.phone = "Phone is required";
+      else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) 
+        newErrors.phone = "Phone should have 10 digits";
+      if (!formData.company) newErrors.company = "Company is required";
+    }
+    
     setErrors(newErrors);
-
-    // Check if any errors exist
-    return !Object.values(newErrors).some(error => error !== "");
+    return Object.keys(newErrors).length === 0;
   };
+
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -213,7 +237,7 @@ const CreateAccount = () => {
           <input
             type="password"
             name="password"
-            placeholder="Password (min. 8 chars, 1 upper, 1 lower, 1 number, 1 special)"
+            placeholder="Password "
             className={`w-full p-2 border rounded-md mt-4 ${
               errors.password ? "border-red-500" : "border-gray-300"
             }`}

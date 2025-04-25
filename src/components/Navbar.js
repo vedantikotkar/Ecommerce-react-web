@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaHeart, FaShoppingCart, FaUser, FaSearch, FaRobot, FaTimes,FaPaperPlane } from "react-icons/fa";
+import { FaHeart, FaShoppingCart, FaUser, FaSearch, FaRobot, FaTimes, FaPaperPlane } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -108,10 +108,12 @@ const Navbar = () => {
               <input
                 type="text"
                 placeholder="Search..."
-                className="bg-transparent outline-none w-full text-sm text-gray-600"
+                className="bg-transparent outline-none ring-0 focus:outline-none focus:ring-0 focus:border-transparent w-full text-sm text-gray-600"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+
+
               <button type="submit" className="absolute right-3 text-gray-600">
                 <FaSearch />
               </button>
@@ -156,35 +158,35 @@ const Navbar = () => {
               </div>
 
 
-                {/* Chatbot UI */}
-      {showChatbot && (
-        <div className="fixed bottom-5 right-5 w-80 bg-white shadow-lg rounded-lg">
-          <div className="flex justify-between items-center bg-blue-100 text-blue-600 p-3  font-semibold rounded-t-lg">
-            <h2>Chatbot</h2>
-            <FaTimes className="cursor-pointer" onClick={() => setShowChatbot(false)} />
-          </div>
+              {/* Chatbot UI */}
+              {showChatbot && (
+                <div className="fixed bottom-5 right-5 w-80 bg-white shadow-lg rounded-lg">
+                  <div className="flex justify-between items-center bg-blue-100 text-blue-600 p-3  font-semibold rounded-t-lg">
+                    <h2>Chatbot</h2>
+                    <FaTimes className="cursor-pointer" onClick={() => setShowChatbot(false)} />
+                  </div>
 
-          <div className="p-3 h-64 overflow-y-auto">
-            {messages.map((msg, index) => (
-              <div key={index} className={`mb-2 p-2 rounded-lg ${msg.sender === "user" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}>
-                {msg.text}
-              </div>
-            ))}
-          </div>
-          <form onSubmit={handleChatSubmit} className="flex p-3 border-t">
-            <input
-              type="text"
-              className="flex-1 p-2 border rounded-l-md"
-              placeholder="Type a message..."
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-            />
-            <button type="submit" className="bg-blue-100 text-blue-600 px-3 py-2 rounded-r-md">
-              <FaPaperPlane />
-            </button>
-          </form>
-        </div>
-             
+                  <div className="p-3 h-64 overflow-y-auto">
+                    {messages.map((msg, index) => (
+                      <div key={index} className={`mb-2 p-2 rounded-lg ${msg.sender === "user" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}>
+                        {msg.text}
+                      </div>
+                    ))}
+                  </div>
+                  <form onSubmit={handleChatSubmit} className="flex p-3 border-t">
+                    <input
+                      type="text"
+                      className="flex-1 p-2 border rounded-l-md"
+                      placeholder="Type a message..."
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                    />
+                    <button type="submit" className="bg-blue-100 text-blue-600 px-3 py-2 rounded-r-md">
+                      <FaPaperPlane />
+                    </button>
+                  </form>
+                </div>
+
               )}
 
             </div>

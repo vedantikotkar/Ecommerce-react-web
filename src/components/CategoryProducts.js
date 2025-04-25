@@ -9,6 +9,7 @@ const CategoryProducts = () => {
   const [products, setProducts] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [wishlist, setWishlist] = useState([]);
+  const userId = "546a1fd0-214c-4877-ac15-c121f6d207f1"; // Replace with actual user ID
 
   useEffect(() => {
     axios
@@ -22,11 +23,22 @@ const CategoryProducts = () => {
       .catch((error) => console.error("Error fetching products:", error));
   }, [categoryId]);
 
-  const handleWishlist = (product) => {
-    if (wishlist.some((item) => item.id === product.id)) {
-      setWishlist(wishlist.filter((item) => item.id !== product.id));
-    } else {
-      setWishlist([...wishlist, product]);
+  const handleWishlist = async (product) => {
+    const isLiked = wishlist.some((item) => item.id === product.id);
+    const url = isLiked
+      ? `http://localhost:4000/like/unlike?userId=${userId}&productId=${product.id}`
+      : `http://localhost:4000/like/liked?userId=${userId}&productId=${product.id}`;
+    
+    try {
+      if (isLiked) {
+        await axios.delete(url);
+        setWishlist(wishlist.filter((item) => item.id !== product.id));
+      } else {
+        await axios.post(url);
+        setWishlist([...wishlist, product]);
+      }
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
     }
   };
 
@@ -52,7 +64,7 @@ const CategoryProducts = () => {
                   onClick={() => navigate(`/productdetail/${product.id}`)}
                 />
                 <FaHeart
-                  className={`absolute top-2 right-2 text-xl cursor-pointer ${
+                  className={`absolute top-2 right-2 text-sm cursor-pointer ${
                     wishlist.some((item) => item.id === product.id)
                       ? "text-black-500"
                       : "text-gray-400"
